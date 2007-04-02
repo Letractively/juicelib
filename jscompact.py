@@ -1,6 +1,5 @@
 """
-Mapeia arquivos de mapeamento de SNPs para contigs
-correspondentes
+Simple javascript code compact tool
 """
 
 import re
