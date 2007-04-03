@@ -20,11 +20,15 @@
 
 var juice = {};
 
+// ###########################################################################
+
+juice.log = {};
+
 /**
 * @class JUICE LOGGER. Provides some basic logging functions, with 3 levels: DEBUG, ERROR and INFO
 * @constructor
 */
-juice.Logger = function(){
+juice.log.AlertLogger = function(){
 	
 	/**	
 	* Default logger: show alert messages
@@ -113,7 +117,6 @@ juice.Logger = function(){
 	}
 	
 }
-
 
 //#################################################
 
@@ -337,8 +340,6 @@ juice.rpc = {
 					else{ 
 	  					if(error){
 	    					error(new Wrapper(req));
-	  					}else{	
-	    					juice.logger.error('HTTP ERROR: ' + req.statusText + ' ' + r.status);
 	  					}
 					}
       			}
@@ -380,7 +381,7 @@ juice.rpc = {
 						requestObject.setRequestHeader("Content-length", parameters.length);
       				requestObject.send(parameters);
 				}catch(e){
-      				juice.logger.error("AJAX ERROR::"+e);
+      				alert("AJAX ERROR::"+e);
 				}
     		}
   		}
@@ -398,7 +399,7 @@ juice.rpc = {
       				requestObject.open('GET', furl, true);
       				requestObject.send(null);
       			}catch(e){
-      				juice.logger.error("AJAX ERROR::"+e);
+      				alert("AJAX ERROR::"+e);
       			}
     		}
   	 	}
@@ -513,7 +514,7 @@ juice.events.key = new function(){
 		
 		function _removehandlers(){
 			// Single events handler
-			document.onkeyup=undefined;
+			document.onkeyup= function(){};
 		}
 		
 	
