@@ -20,7 +20,12 @@
 
 var juice = {};
 
-// ###########################################################################
+
+/**********************************************************************
+*
+*                            LOG SYSTEM
+*
+***********************************************************************/
 
 juice.log = {};
 
@@ -116,34 +121,14 @@ juice.log.AlertLogger = function(){
 			log("[JUICE ERROR]"+message);
 	}
 	
-}
+};
 
-//#################################################
 
-/**
-* ADD SOME NICE FUNCTIONALITIES TO STRING OBJECT
-*/
-
-/** 
-* Returns a new string, whithout white spaces at the end of the given string
-*/
-String.prototype.rstrip = function(){
-	return this.replace(/\s+$/, "");
-}
-
-/**
-* Returns a new string, whithout leading white spaces of the given string
-*/
-String.prototype.lstrip = function(){
-	return this.replace(/^\s+/, "");
-}
-
-/**
-* Returns a new string, whithout  both leading and trailing white spaces of the given string
-*/
-String.prototype.fstrip = function(){
-	return this.rstrip().lstrip();
-}
+/**********************************************************************
+*
+*                            TEXT MANIPULATION
+*
+***********************************************************************/
 
 /**
 * Juice.text: provides some basic string functionalities
@@ -189,15 +174,71 @@ juice.text = {
 	}
 };
 
-//#################################################
+
+/**
+* ADD SOME NICE FUNCTIONALITIES TO STRING OBJECT
+*/
+
+/** 
+* Returns a new string, whithout white spaces at the end of the given string
+*/
+String.prototype.rstrip = function(){
+	return this.replace(/\s+$/, "");
+};
+
+/**
+* Returns a new string, whithout leading white spaces of the given string
+*/
+String.prototype.lstrip = function(){
+	return this.replace(/^\s+/, "");
+};
+
+/**
+* Returns a new string, whithout  both leading and trailing white spaces of the given string
+*/
+String.prototype.fstrip = function(){
+	return this.rstrip().lstrip();
+};
+
+/**********************************************************************
+*
+*                            DATA MANIPULATION
+*
+***********************************************************************/
+
+juice.data = {
+    /**
+    * Returns an array containing the keys stored in 
+	* an associative array (dict). Returns an
+	* empty list if dict is null
+	*/
+	dictKeys: function(dict){
+		var ks = [];
+		if (dict)
+			for (var i in dict) ks.push(i);
+		return ks;
+	},
+	
+	/**
+    * Returns an array containing the values stored in
+	* an associative array (dict). Returns an
+	* empty list if dict is null
+	*/
+	dictValues: function(dict){
+		var vs = [];
+		if (dict){
+			for (var i in dict) vs.push(dict[i]);
+		}
+		return vs;
+	}
+};
+
 
 /**
 * ADD SOME NICE FUNCTIONALITIES TO ARRAY OBJECT
 */
 
-/**
-* Reduce function.
-*/
+/* Reduce function.*/
 Array.prototype.reduce = function(func){
 	if (!func || typeof func != "function")
 		throw "Invalid parameter: func must be a valid function reference"
@@ -241,37 +282,218 @@ Array.prototype.filter = function(func){
 		}
 	}
 	return _list;
-}
-
-juice.data = {
-    /**
-    * Returns an array containing the keys stored in 
-	* an associative array (dict). Returns an
-	* empty list if dict is null
-	*/
-	dictKeys: function(dict){
-		var ks = [];
-		if (dict)
-			for (var i in dict) ks.push(i);
-		return ks;
-	},
-	/**
-    * Returns an array containing the values stored in
-	* an associative array (dict). Returns an
-	* empty list if dict is null
-	*/
-	dictValues: function(dict){
-		var vs = [];
-		if (dict){
-			for (var i in dict) vs.push(dict[i]);
-		}
-		return vs;
-	}
 };
 
-// ################################################
+/**********************************************************************
+*
+*                            AJAX RPC
+*
+***********************************************************************/
 
-juice.rpc = {
+juice.rpc = {};
+	
+/**
+* AJAX Class
+*/
+juice.rpc.Ajax = function(url, response, error){
+	var eh = error;
+  	var rh = response;
+  	var u = url;
+ 
+  	/**
+  	* Create a new request object
+  	*/
+  	function _initreq(response_handler, error_handler){
+  		var req;
+    	if (window.XMLHttpRequest){
+    		req = new XMLHttpRequest();
+    	} else {
+    		if (window.ActiveXObject){
+					req =  new ActiveXObject('Microsoft.XMLHTTP');
+      		}else{
+					return null;
+      		}
+    	}
+    	
+    	if(response_handler)
+    		req.onreadystatechange = _callback(req, response_handler, error_handler);
+    	return req;
+  	}
+  
+  	/** 
+  	* _callback handler. Uses closure to check if the response 
+  	*  is available, and calls the response handler defined by the user
+  	* passing the wrapped response object
+  	*/
+  	function _callback(requestObject, response_handler, error_handler){
+  		var req = requestObject;
+    	var response = response_handler;
+    	var error = error_handler;
+    	var cb	=  function(){
+   			if (req.readyState == 4){
+				if (req.status == 200){
+ 					if(response){
+  						response(new Wrapper(req));
+  					}
+				}
+				else{ 
+  					if(error){
+    					error(new Wrapper(req));
+  					}
+				}
+    		}
+    	}
+    	
+    	return cb; 
+  	}
+
+	/** 
+  	* Response wrapper. An instance of this object is passed to
+  	* the response handler
+  	*/
+  	function Wrapper(responseObject){
+  		var r = responseObject;
+  		return{
+  			/* Returns the XML content */
+  			xml: function (){try{return r.responseXML;}catch(e){return null;}},
+  			
+  			/* Returns the text content */ 
+  			text: function(){try{return r.responseText;}catch(e){return null;}}, 
+  			
+  			/* Returns the json content */
+  			json:function(){
+    			try{
+    				var val = r.responseText.fstrip(); 
+   					return eval("("+val+")");
+    			}catch(e){
+    				return null;
+    			}
+  			},
+  			
+  			/* Returns the response status text */
+  			statusText: function(){try{return r.statusText;}catch(e){return null;}},
+  			
+  			/* Returns the response status code */
+  			statusCode: function(){try{return r.status;}catch(e){return null;}},
+  			
+  			/* Returns the response object */
+  			responseObject: function(){return r;}
+  		} 
+  	}	 
+  
+  	/***************************************
+  	*  PUBLIC METHODS
+  	****************************************
+  	
+  	/**
+  	* Performs an asynchronous post request
+  	*/
+  	this.post = function(requestStr){
+  		// Creates a new request object
+    	var requestObject = _initreq(rh, eh);
+    	if(requestObject){
+    		// Sends the request
+    		try{
+      			requestObject.open('POST', u, true);
+      			requestObject.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
+      			requestObject.setRequestHeader("Connection", "close");
+      			if (requestStr != null)
+					requestObject.setRequestHeader("Content-length", requestStr.length);
+      			requestObject.send(requestStr);
+			}catch(e){
+      			alert("AJAX ERROR::"+e);
+			}
+    	}
+  	}
+  	
+  	/**
+  	* Performs an asynchronous post request
+  	*/
+  	this.get = function(requestStr){
+  		// Creates a new request object
+    	var requestObject = _initreq(rh, eh);
+		var furl = u;
+		// Creates the final request string
+    	if(requestStr != null)
+    		furl = furl +'?'+requestStr; 
+    	if(requestObject){
+    		// Sends the request
+    		try{
+      			requestObject.open('GET', furl, true);
+      			requestObject.send(null);
+      		}catch(e){
+      			alert("AJAX ERROR::"+e);
+      		}
+    	}
+  	}
+};
+	
+	
+juice.rpc.AjaxScheduler = function(url, params){
+	
+		var f;
+		
+		/* Sets parameters */
+		var _delay = 5;
+		if(params.delay > 0)
+			_delay = params.delay;
+		
+		var _response = params.response;
+		var _error = params.error;
+		var _method = params.method;
+		var _request = params.request;
+		
+		/* Wraps the handler, and resets the timer after its done */
+		function wrap(handler){
+			return function(){
+				if(handler)
+					handler();
+				setTimeout(f, _delay);
+			}
+		};
+		
+		/* Creates new AJAX object */
+		var _xhr = new juice.rpc.Ajax(url, wrap(_response), wrap(_error));
+		
+		/* Defines the send method */
+		var send;
+		if (_method == "POST") send = _xhr.post;
+		else send = _xhr.get;
+		
+		/* Defines the send function */
+		if (typeof _request == "function" )
+			f = function(){send(_request());};
+		else
+			f = function(){send(_request);};
+		
+		
+		/***************************************
+  		*  PUBLIC METHODS
+  		****************************************
+  
+		/**
+		* Starts the AjaxScheduler
+		*/
+		this.start = function(){
+			setTimeout(f, _delay);
+		}
+		
+		/**
+		* Stops the AjaxScheduler
+		*/
+		this.stop = function(){
+			clearInterval(_time);
+		}
+};
+
+
+/**********************************************************************
+*
+*                            Basic HTTP
+*
+***********************************************************************/
+
+juice.http ={
 	/**
 	* Function that builds a query string based on
 	* an associative array
@@ -292,121 +514,15 @@ juice.rpc = {
 			sb.append(encodeURIComponent(dict[ks[i]]));
 		}
 		return sb.toString();
-	},
-	
-	/**
-	* AJAX Class
-	*/
-	Ajax: function(url, response, error){
-		var eh = error;
-  		var rh = response;
-  		var u = url;
- 
-  		/**
-  		* Create a new request object
-  		*/
-  		function _initreq(response_handler, error_handler){
-  			var req;
-    		if (window.XMLHttpRequest){
-    			req = new XMLHttpRequest();
-    		} else {
-      			if (window.ActiveXObject){
-					req =  new ActiveXObject('Microsoft.XMLHTTP');
-      			}else{
-					return null;
-      			}
-    		}
-    		if(response_handler)
-    			req.onreadystatechange = _callback(req, response_handler, error_handler);
-    		return req;
-  		}
-  
-  		/** 
-  		* _callback handler. Uses closure to check if the response 
-  		*  is available, and calls the response handler defined by the user
-  		* passing the wrapped response object
-  		*/
-  		function _callback(requestObject, response_handler, error_handler){
-  			var req = requestObject;
-    		var response = response_handler;
-    		var error = error_handler;
-    		var cb	=  function(){
-   				if (req.readyState == 4){
-					if (req.status == 200){
-	  					if(response){
-	  						response(new Wrapper(req));
-	  					}
-					}
-					else{ 
-	  					if(error){
-	    					error(new Wrapper(req));
-	  					}
-					}
-      			}
-    		}
-    		return cb; 
-  		}
-
-  		function Wrapper(responseObject){
-  			var r = responseObject;
-  			return{
-  				xml: function (){try{return r.responseXML;}catch(e){return null;}}, 
-  				text: function(){try{return r.responseText;}catch(e){return null;}}, 
-  				json:function(){
-    				try{
-    					var val = juice.text.fstrip(r.responseText); 
-   						return eval("("+val+")");
-    				}catch(e){
-    					return null;
-    				}
-  				},
-  				statusText: function(){try{return r.statusText;}catch(e){return null;}},
-  				statusCode: function(){try{return r.status;}catch(e){return null;}},
-  				requestObject: function(){return r;}
-  			} 
-  		}	 
-  
-  		// PUBLIC METHODS
-  		/**
-  		* Performs an asynchronous post request
-  		*/
-  		this.post = function(parameters){
-    		var requestObject = _initreq(rh, eh);
-    		if(requestObject){
-      			try{
-      				requestObject.open('POST', u, true);
-      				requestObject.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
-      				requestObject.setRequestHeader("Connection", "close");
-      				if (parameters != null)
-						requestObject.setRequestHeader("Content-length", parameters.length);
-      				requestObject.send(parameters);
-				}catch(e){
-      				alert("AJAX ERROR::"+e);
-				}
-    		}
-  		}
-  	
-  		/**
-  		* Performs an asynchronous post request
-  		*/
-  		this.get = function(parameters){
-    		var requestObject = _initreq(rh, eh);
-			var furl = u;
-    		if(parameters != null)
-    			furl = furl +'?'+parameters; 
-    		if(requestObject){
-      			try{
-      				requestObject.open('GET', furl, true);
-      				requestObject.send(null);
-      			}catch(e){
-      				alert("AJAX ERROR::"+e);
-      			}
-    		}
-  	 	}
 	}
-};
+}
 
-// ################################################
+/**********************************************************************
+*
+*                            EVENTS HANDLER
+*
+***********************************************************************/
+
 juice.events = {};
 
 juice.events.onload = new function(){
