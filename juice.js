@@ -445,9 +445,9 @@ juice.rpc.AjaxScheduler = function(url, params){
 		
 		/* Wraps the handler, and resets the timer after its done */
 		function wrap(handler){
-			return function(){
+			return function(req){
 				if(handler)
-					handler();
+					handler(req);
 				setTimeout(f, _delay);
 			}
 		};
