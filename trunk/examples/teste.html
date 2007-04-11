@@ -20,24 +20,22 @@
 //juice.events.key.down(function(){alert("down")});
 //juice.events.key.right(function(){alert("turning off"); juice.events.key.unhandleKeys();});
 
-sched = new juice.rpc.AjaxScheduler("http://localhost/~mgalves/teste.xml",
-					 {response: function(){alert("ok");},
-					 delay: 10000,
-					 request: function(){alert("chamou"); return "aqui";}});
+sched = new juice.rpc.AjaxScheduler("teste.xml",
+					 {response: response_handler,
+					 delay: 10000});
 
 sched.start();
 
 
-sched2 = new juice.rpc.AjaxScheduler("http://localhost/~mgalves/teste.xml",
-					 {response: function(){alert("ok 2");},
-					 delay: 7000,
-					 request: "aqui sem fuyncao"});
+sched2 = new juice.rpc.AjaxScheduler("teste.xml",
+					 {response: response_handler2,
+					 delay: 7000});
 
 sched2.start();
 
 
 // CREATES A NEW AJAX OBJECT
-var good_adress_ajax = new juice.rpc.Ajax("my_test_url", response_handler, error_handler);
+//var good_adress_ajax = new juice.rpc.Ajax("my_test_url", response_handler, error_handler);
 
 function response_handler(req){
 	sb = new juice.text.StringBuffer();
@@ -47,7 +45,19 @@ function response_handler(req){
 	sb.append("resposta json::"+req.json());
 	sb.append("resposta status::"+req.statusText());
 	sb.append("resposta status code::"+req.statusCode());
-	sb.append("resposta obj::"+req.requestObject());
+	sb.append("resposta obj::"+req.responseObject());
+	alert(sb.concat('\n'));
+}
+
+function response_handler2(req){
+	sb = new juice.text.StringBuffer();
+	sb.append("OK 2:");
+	sb.append("resposta txt::"+req.text());
+	sb.append("resposta xml::"+req.xml());
+	sb.append("resposta json::"+req.json());
+	sb.append("resposta status::"+req.statusText());
+	sb.append("resposta status code::"+req.statusCode());
+	sb.append("resposta obj::"+req.responseObject());
 	alert(sb.concat('\n'));
 }
 
