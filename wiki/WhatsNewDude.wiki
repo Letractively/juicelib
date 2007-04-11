@@ -1,0 +1,8 @@
+#summary What's new in juice lib
+#labels Featured,Phase-Design
+
+== 04/10/2007 ==
+
+Version 0.1.2 released, with AJAX polling system feature added.
+
+
