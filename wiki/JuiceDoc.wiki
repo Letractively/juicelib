@@ -5,19 +5,36 @@
 
 == StringBuffer ==
 
-_juice.text.StringBuffer_ offers a buffer to build strings. Very useful if you need to concatenate small pieces of text to build a sentence. Some comparison tests showed that the use of string buffer is much more efficient than using str = str1 + str2.
+{{{juice.text.StringBuffer}}} offers a buffer to build strings. Very useful if you need to concatenate small pieces of text to build a sentence. Some comparison tests showed that the use of string buffer is much more efficient than using str = str1 + str2.
 
 *Constructor:*
 
-var buffer = new juice.text.StringBuffer()
+{{{var buffer = new juice.text.StringBuffer()}}}
 
 *Methods:*
 
-   * *append(string)*: appends a string to the end of the current buffer. Returns a reference to the buffer, allowing to append in sequence. Example: _buffer.append("Hello").append(" ").append("World")_.
+   * *append(string)*: appends a string to the end of the current buffer. Returns a reference to the buffer, allowing to append in sequence. Example: {{{buffer.append("Hello").append(" ").append("World")}}}
 
-   * *toString()*: join all the strings appended and returns a string. Example: _buffer.toString() returns "Hello World".
+   * *toString()*: join all the strings appended and returns a string. Example: {{{buffer.toString()}}} returns "Hello World".
 
-   * *concat(char): join all the strings and puts char between strings. Example:_buffer.concat("#") returns "Hello# #World#".
+   * *concat(char)*: join all the strings and puts char between strings. Example: {{{buffer.concat("#")}}} returns "Hello# #World#".
+
+
+== String functions ==
+
+Juice lib adds some functions to the native javascript String, that can be used in any string.
+
+Example: {{{"Hello World   ".rstrip()}}} returns "Hello World".
+
+   * *rstrip()*: Returns a new string, without trailing white spaces.
+
+   * *lstrip()*: Returns a new string, without leading white spaces.
+
+   * *fstrip()*: Returns a new string, without  both leading and trailing white spaces.
+
+
+
+
 
 
 
