@@ -1,0 +1,25 @@
+#summary Juice features documentation
+#labels Featured,Phase-Implementation,Phase-Design
+
+= Package juice.text  =
+
+== StringBuffer ==
+
+_juice.text.StringBuffer_ offers a buffer to build strings. Very useful if you need to concatenate small pieces of text to build a sentence. Some comparison tests showed that the use of string buffer is much more efficient than using str = str1 + str2.
+
+*Constructor:*
+
+var buffer = new juice.text.StringBuffer()
+
+*Methods:*
+
+   * *append(string)*: appends a string to the end of the current buffer. Returns a reference to the buffer, allowing to append in sequence. Example: _buffer.append("Hello").append(" ").append("World")_.
+
+   * *toString()*: join all the strings appended and returns a string. Example: _buffer.toString() returns "Hello World".
+
+   * *concat(char): join all the strings and puts char between strings. Example:_buffer.concat("#") returns "Hello# #World#".
+
+
+
+
+
