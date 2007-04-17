@@ -1,6 +1,154 @@
 #summary Juice features documentation
 #labels Featured,Phase-Implementation,Phase-Design
 
+= Package juice.rpc = 
+
+== Ajax ==
+
+Performs asynchronous get/post requests and handles response.
+
+=== Constructor ===
+
+{{{var ajax = new juice.rpc.Ajax(url, response, error);}}
+
+*Parameters:*
+	
+	* *url*: URL string, without request parameters. Example: "http://www.myurl.com/".
+
+	* *response* (optional): reference to the function that will handle response. If response is null or undefined, the response will not be considered. 
+
+	* *error* (optional): reference to the function that will handle any request error. If the error function is null or undefined, the request will fail silently.
+
+=== Methods ===
+
+	* *get(string)*: performs a get request, sending {{{string}}} as request parameters. If string is undefined or null, the no parameters will be sent. Example: {{{ajax.get("name=ajax&id=2")}}} or {{{ajax.get()}}}.
+	* *post(string)*: performs a post request, sending {{{string}}} as request parameters. If string is undefined or null, the no parameters will be sent. Example: {{{ajax.get("name=ajax&id=2")}}} or {{{ajax.get()}}}.
+	
+=== Response wrapper ===
+
+The ajax object will pass to the handler a wrapper object that encapsulates the response object. This wrapper is created by the ajax object.
+
+	* *xml()*: returns the xml content.
+	* *text()*: returns the response text content.
+	* *json()*: return the response json content.
+	* *statusText()*: returns the response status text.
+	* *statusCode()*: returns the response status code.
+	* *responseObject()*: returns the response object. 
+	
+=== Description ===
+
+The ajax object will handle all assynchrounous, sending the request using get or post, and calling the appropriate response handler when needed. The object will pass to the handler a wrapper object that encapsulates the response object. The code above show an example:
+
+var ajax = new juice.rpc.Ajax("my_test_url", response_handler);
+
+function response_handler(req){
+	sb = new juice.text.StringBuffer();
+	sb.append("OK:");
+	sb.append("txt::"+req.text());
+	sb.append("xml::"+req.xml());
+	sb.append("json::"+req.json());
+	sb.append("status::"+req.statusText());
+	sb.append("status code::"+req.statusCode());
+	sb.append("obj::"+req.responseObject());
+	alert(sb.concat('\n'));
+}
+
+== AjaxScheduler ==
+
+Performs asynchronous get/post requests at regular intervals and handles response.
+
+=== Constructor ===
+
+{{{var sched = new juice.rpc.AjaxScheduler(url, params);}}
+
+*Parameters:*
+	
+	* *url*: URL string, without request parameters. Example: "http://www.myurl.com/".
+
+	* *params* (optional): associative array that wraps a list of parameters used to setup the AjaxScheduler. The following parameters are allowed:
+		* *delay*: delay between each request, in milliseconds.
+		* *response* (optional): reference to the function that will handle response. If response is null or undefined, the response will not be considered. 
+		* *error* (optional): reference to the function that will handle any request error. If the error function is null or undefined, the request will fail silently.
+		* *method* (optional): string representing the send method. Values can be "GET" or "POST". Default value is "GET".
+		* *request* (optional): can be either a request parameter string, or a reference to a function that returns a parameter string (useful when the parameters can change over time). 
+		
+=== Methods ===
+
+	* *start()*: starts the scheduler.
+
+	* *stop()*: stops the scheduler.
+		
+=== Description ===
+
+The AjaxScheduler object perform asynchronous requests, calling the appropriate response handler when needed. As with the Ajax object, the scheduler will pass to the handler a wrapper object that encapsulates the response object. The code above show an example:
+
+*Example 1:*
+
+var sched = new juice.rpc.AjaxScheduler("url",
+					 {response: response_handler,
+					 delay: 7000});
+					 
+function response_handler(req){
+	sb = new juice.text.StringBuffer();
+	sb.append("OK:");
+	sb.append("txt::"+req.text());
+	sb.append("xml::"+req.xml());
+	sb.append("json::"+req.json());
+	sb.append("status::"+req.statusText());
+	sb.append("status code::"+req.statusCode());
+	sb.append("obj::"+req.responseObject());
+	alert(sb.concat('\n'));
+}
+
+*Example 2:*
+
+var sched = new juice.rpc.AjaxScheduler("url",
+					 {response: function(){alert("OK");},
+					 request: function(){return "id=2";},
+					 delay: 7000,
+					 method: "GET"});
+					 
+*Example 3:*
+
+var sched = new juice.rpc.AjaxScheduler("url",
+					 {response: function(){alert("OK");},
+					 error: function(){alert("ERROR");},
+					 request: "id=2",
+					 delay: 7000});
+		 		 
+= Package juice.html =
+
+=== buildRequestString(dict)===
+
+Builds a request string based on data stored in an associative array. 
+
+Example: {{{juice.html.buildRequestString({"id":2, "name":"ajax"})}}} returns "id=2&name=ajax".
+
+					 
+= Package juice.data =
+
+=== dictKeys(dict) ===
+
+Returns an array containing all the keys stored in an associative array.
+
+Example: {{{juice.html.dictKeys({"a":1,"b":2,"c":3})}}} returns ["a","b","c"].
+
+=== dictValue(dict) ===
+
+Returns an array containing all the values stored in an associative array.
+
+Example: {{{juice.html.dictKeys({"a":1,"b":2,"c":3})}}} returns [1,2,3].
+
+=== Array functions ===
+
+Juice Lib adds some useful functions to the native javascript array object.
+
+*Functions:*
+
+	*map(func)*: Returns a new array A where, for each element of the original array B, A[i]=func(B[i]). Example: {{{[1,2,3].map(func(x){return 2*x;})}}} returns {{{[2,4,6]}}}.
+	*filter(func)*: Returns a new array A where, for each element of the original array B, A[i] exists if func(B[i])==true. Example: {{{[1,2,3].filter(func(x){return x%2==0;})}}} returns {{{[2]}}}.
+	*reduce(func)*: Reduces the array, using func, and returns a scalar. func must receive two parameters. Example: {{{[1,2,3].reduce(function(x, y){returns x+y;})}}} returns 6.	
+
 = Package juice.text  =
 
 == StringBuffer ==
@@ -31,7 +179,6 @@ Example: {{{"Hello World   ".rstrip()}}} returns "Hello World".
    * *lstrip()*: Returns a new string, without leading white spaces.
 
    * *fstrip()*: Returns a new string, without  both leading and trailing white spaces.
-
 
 
 
