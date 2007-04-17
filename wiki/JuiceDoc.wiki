@@ -22,6 +22,7 @@ Performs asynchronous get/post requests and handles response.
 === Methods ===
 
 	* *get(string)*: performs a get request, sending {{{string}}} as request parameters. If string is undefined or null, the no parameters will be sent. Example: {{{ajax.get("name=ajax&id=2")}}} or {{{ajax.get()}}}.
+
 	* *post(string)*: performs a post request, sending {{{string}}} as request parameters. If string is undefined or null, the no parameters will be sent. Example: {{{ajax.get("name=ajax&id=2")}}} or {{{ajax.get()}}}.
 	
 === Response wrapper ===
@@ -187,7 +188,6 @@ Example: {{{"Hello World   ".rstrip()}}} returns "Hello World".
    * *lstrip()*: Returns a new string, without leading white spaces.
 
    * *fstrip()*: Returns a new string, without  both leading and trailing white spaces.
-
 
 
 
