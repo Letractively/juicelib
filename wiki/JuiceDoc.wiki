@@ -139,13 +139,13 @@ Example: {{{juice.html.buildRequestString({"id":2, "name":"ajax"})}}} returns "i
 
 Returns an array containing all the keys stored in an associative array.
 
-Example: {{{juice.html.dictKeys({"a":1,"b":2,"c":3})}}} returns ["a","b","c"].
+Example: {{{juice.data.dictKeys({"a":1,"b":2,"c":3})}}} returns ["a","b","c"].
 
 === dictValue(dict) ===
 
 Returns an array containing all the values stored in an associative array.
 
-Example: {{{juice.html.dictKeys({"a":1,"b":2,"c":3})}}} returns [1,2,3].
+Example: {{{juice.data.dictKeys({"a":1,"b":2,"c":3})}}} returns [1,2,3].
 
 === Array functions ===
 
@@ -187,7 +187,6 @@ Example: {{{"Hello World   ".rstrip()}}} returns "Hello World".
    * *lstrip()*: Returns a new string, without leading white spaces.
 
    * *fstrip()*: Returns a new string, without  both leading and trailing white spaces.
-
 
 
 
