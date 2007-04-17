@@ -1,7 +1,7 @@
 #summary Juice features documentation
 #labels Featured,Phase-Implementation,Phase-Design
-
-= Package juice.rpc = 
+ 
+= Package juice.rpc =
 
 == Ajax ==
 
@@ -39,6 +39,7 @@ The ajax object will pass to the handler a wrapper object that encapsulates the 
 
 The ajax object will handle all assynchrounous, sending the request using get or post, and calling the appropriate response handler when needed. The object will pass to the handler a wrapper object that encapsulates the response object. The code above show an example:
 
+{{{
 var ajax = new juice.rpc.Ajax("my_test_url", response_handler);
 
 function response_handler(req){
@@ -52,6 +53,7 @@ function response_handler(req){
 	sb.append("obj::"+req.responseObject());
 	alert(sb.concat('\n'));
 }
+}}}
 
 == AjaxScheduler ==
 
@@ -84,6 +86,7 @@ The AjaxScheduler object perform asynchronous requests, calling the appropriate 
 
 *Example 1:*
 
+{{{
 var sched = new juice.rpc.AjaxScheduler("url",
 					 {response: response_handler,
 					 delay: 7000});
@@ -99,22 +102,27 @@ function response_handler(req){
 	sb.append("obj::"+req.responseObject());
 	alert(sb.concat('\n'));
 }
+}}}
 
 *Example 2:*
 
+{{{
 var sched = new juice.rpc.AjaxScheduler("url",
 					 {response: function(){alert("OK");},
 					 request: function(){return "id=2";},
 					 delay: 7000,
 					 method: "GET"});
+}}}
 					 
 *Example 3:*
 
+{{{
 var sched = new juice.rpc.AjaxScheduler("url",
 					 {response: function(){alert("OK");},
 					 error: function(){alert("ERROR");},
 					 request: "id=2",
 					 delay: 7000});
+}}}
 		 		 
 = Package juice.html =
 
@@ -143,10 +151,10 @@ Example: {{{juice.html.dictKeys({"a":1,"b":2,"c":3})}}} returns [1,2,3].
 
 Juice Lib adds some useful functions to the native javascript array object.
 
-*Functions:*
-
 	*map(func)*: Returns a new array A where, for each element of the original array B, A[i]=func(B[i]). Example: {{{[1,2,3].map(func(x){return 2*x;})}}} returns {{{[2,4,6]}}}.
+
 	*filter(func)*: Returns a new array A where, for each element of the original array B, A[i] exists if func(B[i])==true. Example: {{{[1,2,3].filter(func(x){return x%2==0;})}}} returns {{{[2]}}}.
+
 	*reduce(func)*: Reduces the array, using func, and returns a scalar. func must receive two parameters. Example: {{{[1,2,3].reduce(function(x, y){returns x+y;})}}} returns 6.	
 
 = Package juice.text  =
@@ -179,7 +187,6 @@ Example: {{{"Hello World   ".rstrip()}}} returns "Hello World".
    * *lstrip()*: Returns a new string, without leading white spaces.
 
    * *fstrip()*: Returns a new string, without  both leading and trailing white spaces.
-
 
 
 
