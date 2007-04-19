@@ -1,0 +1,19 @@
+Pacote RPC
+
+- Adicionar objeto com lock de Ajax: define que a cada instante apenas uma requisicao pode estar ativa.
+- Adicionar wrappers get, post e send
+
+Pacote HTML
+
+- Criar grabber de dados de formulario
+- Criar gerador de links para div, span e links. O sistema recebe um id e adiciona uma propriedade onclick chamando o argumento desejado.
+- Criar um DIV/SPAN content render: recebe uma dia, uma URL, abre uma requisicao e atualiza o conteudo da DIV/SPAN (innerHTML) com o snipped HTML obtido.
+- Content renderer com timer.
+
+Pacote widgets
+
+- Suggests
+- Combo builder
+- Grupo de combos interligados
+- DIV display: display de um div dentro de outro, com comandos para slide.
+
