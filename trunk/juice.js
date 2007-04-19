@@ -254,16 +254,17 @@ Array.prototype.reduce = function(func){
 
 /**
 * Map function. Apply a function f to all elements of an array
-* modifying the original array.
+* and returns a new array.
 */
 Array.prototype.map = function(func){
 	if (!func || typeof func != "function")
 		throw "Invalid parameter: func must be a valid function reference"
 	var _len = this.length;
+	var _list = [];
 	for (var i=0; i<_len; i++){
-		this[i] = func(this[i]);
+		_list.push(func(this[i]));
 	}
-	return this;
+	return _list;
 }
 	
 /**
@@ -469,7 +470,7 @@ juice.rpc.AjaxScheduler = function(url, params){
 		
 		/***************************************
   		*  PUBLIC METHODS
-  		****************************************
+  		****************************************/
   
 		/**
 		* Starts the AjaxScheduler
