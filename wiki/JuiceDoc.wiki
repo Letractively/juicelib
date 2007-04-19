@@ -1,6 +1,7 @@
 #summary Juice features documentation
 #labels Featured,Phase-Implementation,Phase-Design
  
+
 = Package juice.rpc =
 
 == Ajax ==
@@ -188,7 +189,6 @@ Example: {{{"Hello World   ".rstrip()}}} returns "Hello World".
    * *lstrip()*: Returns a new string, without leading white spaces.
 
    * *fstrip()*: Returns a new string, without  both leading and trailing white spaces.
-
 
 
 
