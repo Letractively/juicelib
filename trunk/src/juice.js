@@ -15,10 +15,16 @@
 * JUICE Javascript User Interface Component Library
 * 
 * @creator Miguel Galves
-* @version 0.1
+* @version 0.1.3
 ****************************************************************************/
 
-var juice = {};
+var juice = {
+	info:{
+		name: "juice lib", 
+		version: "0.1.3",
+		creator: "Miguel Galves"
+	}
+};
 
 
 /**********************************************************************
@@ -291,7 +297,26 @@ Array.prototype.filter = function(func){
 *
 ***********************************************************************/
 
-juice.rpc = {};
+juice.rpc = {
+
+	/* Ajax GET request wrapper */
+	get: function(url, params, response, error)	{
+		var ajx = new juice.rpc.Ajax(url, response_handler, error_handler);
+		ajx.get(params);
+	},
+	
+	/* Ajax POST request wrapper */
+	post: function(url, params, response, error)	{
+		var ajx = new juice.rpc.Ajax(url, response_handler, error_handler);
+		ajx.post(params);
+	},
+	
+	/* Sends a message using POST method, does not wait for an answer */
+	send: function(url, params)	{
+		var ajx = new juice.rpc.Ajax(url);
+		ajx.post(params);
+	}
+};
 	
 /**
 * AJAX Class
@@ -310,43 +335,37 @@ juice.rpc.Ajax = function(url, response, error){
     		req = new XMLHttpRequest();
     	} else {
     		if (window.ActiveXObject){
-					req =  new ActiveXObject('Microsoft.XMLHTTP');
+				req =  new ActiveXObject('Microsoft.XMLHTTP');
       		}else{
-					return null;
+				return null;
       		}
     	}
     	
-    	if(response_handler)
-    		req.onreadystatechange = _callback(req, response_handler, error_handler);
-    	return req;
-  	}
-  
-  	/** 
-  	* _callback handler. Uses closure to check if the response 
-  	*  is available, and calls the response handler defined by the user
-  	* passing the wrapped response object
-  	*/
-  	function _callback(requestObject, response_handler, error_handler){
-  		var req = requestObject;
-    	var response = response_handler;
-    	var error = error_handler;
-    	var cb	=  function(){
-   			if (req.readyState == 4){
-				if (req.status == 200){
- 					if(response){
-  						response(new Wrapper(req));
-  					}
-				}
-				else{ 
-  					if(error){
-    					error(new Wrapper(req));
-  					}
-				}
-    		}
+    	if(response_handler || error_handler){
+    		/** 
+  			* callback handler. Uses closure to check if the response 
+  			* is available, and calls the response handler defined by the user
+  			* passing the wrapped response object
+  			*/
+    		req.onreadystatechange = function(){
+   				if (req.readyState == 4){
+					if (req.status == 200){
+ 						if(response_handler){
+  							response_handler(new Wrapper(req));
+  						}
+					}
+					else{ 
+  						if(error_handler){
+    						error_handler(new Wrapper(req));
+  						}
+					}
+    			}
+    		};
     	}
-    	
-    	return cb; 
-  	}
+  		
+    	return req;
+  	};
+  
 
 	/** 
   	* Response wrapper. An instance of this object is passed to
@@ -490,7 +509,7 @@ juice.rpc.AjaxScheduler = function(url, params){
 
 /**********************************************************************
 *
-*                            Basic HTTP
+*                          HTTP FUNCTIONS
 *
 ***********************************************************************/
 
@@ -516,6 +535,38 @@ juice.http ={
 		}
 		return sb.toString();
 	}
+		
+}
+
+
+/**********************************************************************
+*
+*                          HTML FUNCTIONS
+*
+***********************************************************************/
+
+juice.html={
+		
+	/*
+	* Performs a POST request, and updates the given HTML
+	* element innerHTML with the response (html snippet)
+	*  @param {string} url
+	*  @param {string} request parameters
+	*  @param {string} blockid DIV/SPAN id
+	*/
+	updateBlockContent: function(url, params, blockid){
+		juice.rpc.post(url, params, function(response){
+			if(blockid){
+				alert(blockid);
+				 var div = document.getElementById(blockid);
+				 alert(div);
+				 if (div){
+				 	div.innerHTML = response.text();
+				 }
+			}
+		});	
+	}
+	
 }
 
 /**********************************************************************
@@ -626,16 +677,7 @@ juice.events.key = new function(){
 		*/
 		function _addhandlers(){
 			// Single events handler
-			document.onkeyup=_handler;
-		}
-		
-		function _removehandlers(){
-			// Single events handler
-			document.onkeyup= function(){};
-		}
-		
-	
-		var _handler = function(e){
+			document.onkeyup= function(e){
 				var code;
 				if (!e) var e = window.event;
 				// Detecta o target da tecla
@@ -661,7 +703,8 @@ juice.events.key = new function(){
 				if (_selist[code]){
 					_selist[code](e);
 				}
-		}
+			}
+		};
 		
 	
 		/* PUBLIC FUNCTIONS */
@@ -707,7 +750,7 @@ juice.events.key = new function(){
 			* Turn off the keyboard handler
 			*/
 			unhandleKeys: function(){
-				_removehandlers();
+				document.onkeyup= function(){};
 			},
 			/**
 			* Turn on the keyboard handler
