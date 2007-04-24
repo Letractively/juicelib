@@ -289,24 +289,24 @@ Method for body.onload attribute registration,  in case the automatic behaviour 
 
 Example: {{{ juice.events.exec();}}}
 
-== juice.events.key == 
+== juice.events.key ==
 
 (Since 0.1.1)
 
 Keyboard event manager. Fires action based on key pressed outside input widgets (textfield, textarea, input).
 DOES NOT WORK FOR SAFARI
 
-=== unhandleKeys() === 
+=== unhandleKeys() ===
 
 (Since 0.1.1)
 
-Turn off the keyboard handler
+Turn off the keyboard handler.
 		
-== handleKeys() === 
+== handleKeys() ===
 
 (Since 0.1.1)
 
-Turn on the keyboard handler
+Turn on the keyboard handler.
 
 === add(symbol, func) ===
 
@@ -320,7 +320,7 @@ Registers a function to be executed when the given char is pressed
 
 Example: {{{juice.events.key.add("A", function(){daler("Key A pressed");});}}}
 			
-=== left(func) === 
+=== left(func) ===
 
 (Since 0.1.1)
 
@@ -331,7 +331,7 @@ Registers a function to be executed when the left key is pressed
 
 Example: {{{juice.events.key.left(function(){alert("left")});}}}
 
-=== right(func) === 
+=== right(func) ===
 
 (Since 0.1.1)
 
@@ -342,7 +342,7 @@ Registers a function to be executed when the right key is pressed
 
 Example: {{{juice.events.key.right(function(){alert("right")});}}}
 
-=== up(func) === 
+=== up(func) ===
 
 (Since 0.1.1)
 
@@ -353,7 +353,7 @@ Registers a function to be executed when the up key is pressed
 
 Example: {{{juice.events.key.up(function(){alert("up")});}}}
 
-=== down(func) === 
+=== down(func) ===
 
 (Since 0.1.1)
 
