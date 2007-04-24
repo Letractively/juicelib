@@ -4,7 +4,9 @@
 
 = Package juice.rpc =
 
-== Ajax ==  [Since 0.1.1]
+==Ajax==
+
+(Since 0.1.1)
 
 Performs asynchronous get/post requests and handles response.
 
@@ -57,7 +59,9 @@ function response_handler(req){
 }
 }}}
 
-== AjaxScheduler == [Since 0.1.2]
+== AjaxScheduler ==
+
+(Since 0.1.2)
 
 Performs asynchronous get/post requests at regular intervals and handles response.
 
@@ -126,7 +130,9 @@ var sched = new juice.rpc.AjaxScheduler("url",
 					 delay: 7000});
 }}}
 
-== get(url, params, response, error) == [Since 0.2]
+== get(url, params, response, error) ==
+
+(Since 0.2)
 
 Function that wraps ans Ajax GET request. 
 
@@ -139,7 +145,9 @@ Function that wraps ans Ajax GET request.
 
 	* *error* (optional): reference to the function that will handle any request error. If the error function is null or undefined, the request will fail silently.
 	
-== post(url, params, response, error) == [Since 0.2]
+== post(url, params, response, error) ==
+
+(Since 0.2)
 
 Function that wraps ans Ajax POST request. 
 
@@ -152,7 +160,9 @@ Function that wraps ans Ajax POST request.
 
 	* *error* (optional): reference to the function that will handle any request error. If the error function is null or undefined, the request will fail silently.
 	
-== send(url, params) == [Since 0.2]
+== send(url, params) ==
+
+(Since 0.2)
 
 Function that sends an Ajax POST request without waiting for a response. 
 
@@ -163,7 +173,9 @@ Function that sends an Ajax POST request without waiting for a response.
 			 		 
 = Package juice.html =
 
-=== buildRequestString(dict)=== [Since 0.1.2]
+=== buildRequestString(dict)===
+
+(Since 0.1.2)
 
 Builds a request string based on data stored in an associative array. 
 
@@ -172,19 +184,25 @@ Example: {{{juice.html.buildRequestString({"id":2, "name":"ajax"})}}} returns "i
 					 
 = Package juice.data =
 
-=== dictKeys(dict) === [Since 0.1.1]
+=== dictKeys(dict) ===
+
+(Since 0.1.1)
 
 Returns an array containing all the keys stored in an associative array.
 
 Example: {{{juice.data.dictKeys({"a":1,"b":2,"c":3})}}} returns ["a","b","c"].
 
-=== dictValue(dict) === [Since 0.1.1]
+=== dictValue(dict) ===
+
+(Since 0.1.1)
 
 Returns an array containing all the values stored in an associative array.
 
 Example: {{{juice.data.dictKeys({"a":1,"b":2,"c":3})}}} returns [1,2,3].
 
-=== Array functions === [Since 0.1.1]
+=== Array functions ===
+
+(Since 0.1.1)
 
 Juice Lib adds some useful functions to the native javascript array object.
 
@@ -196,7 +214,9 @@ Juice Lib adds some useful functions to the native javascript array object.
 
 = Package juice.text  =
 
-== StringBuffer == [Since 0.1.1]
+== StringBuffer ==
+
+(Since 0.1.1)
 
 {{{juice.text.StringBuffer}}} offers a buffer to build strings. Very useful if you need to concatenate small pieces of text to build a sentence. Some comparison tests showed that the use of string buffer is much more efficient than using str = str1 + str2.
 
@@ -213,7 +233,9 @@ Juice Lib adds some useful functions to the native javascript array object.
    * *concat(char)*: join all the strings and puts char between strings. Example: {{{buffer.concat("#")}}} returns "Hello# #World#".
 
 
-== String functions == [Since 0.1.1]
+== String functions ==
+
+(Since 0.1.1)
 
 Juice lib adds some functions to the native javascript String, that can be used in any string.
 
@@ -226,13 +248,19 @@ Example: {{{"Hello World   ".rstrip()}}} returns "Hello World".
    * *fstrip()*: Returns a new string, without  both leading and trailing white spaces.
    
    
-= Package juice.events = [Since 0.1.1]
+= Package juice.events =
 
-== juice.events.onload == [Since 0.1.1]
+(Since 0.1.1)
+
+== juice.events.onload ==
+
+(Since 0.1.1)
 
 Provides some facilites to create on load events.
 
-=== add(func) === [Since 0.1.1]
+=== add(func) ===
+
+(Since 0.1.1)
 
 Registers a function to be executed after document loading.
 
@@ -253,26 +281,36 @@ Example 2:
 	juice.events.onload.add(myfunc);
 }}}
 
-=== exec() === [Since 0.1.1]
+=== exec() ===
+
+(Since 0.1.1)
 
 Method for body.onload attribute registration,  in case the automatic behaviour does not work.
 
 Example: {{{ juice.events.exec();}}}
 
-== juice.events.key == [Since 0.1.1]
+== juice.events.key == 
+
+(Since 0.1.1)
 
 Keyboard event manager. Fires action based on key pressed outside input widgets (textfield, textarea, input).
 DOES NOT WORK FOR SAFARI
 
-=== unhandleKeys() === [Since 0.1.1]
+=== unhandleKeys() === 
+
+(Since 0.1.1)
 
 Turn off the keyboard handler
 		
-== handleKeys() === [Since 0.1.1]
+== handleKeys() === 
+
+(Since 0.1.1)
 
 Turn on the keyboard handler
 
-=== add(symbol, func) === [Since 0.1.1]
+=== add(symbol, func) ===
+
+(Since 0.1.1)
 
 Registers a function to be executed when the given char is pressed
 
@@ -282,7 +320,9 @@ Registers a function to be executed when the given char is pressed
 
 Example: {{{juice.events.key.add("A", function(){daler("Key A pressed");});}}}
 			
-=== left(func) === [Since 0.1.1]
+=== left(func) === 
+
+(Since 0.1.1)
 
 Registers a function to be executed when the left key is pressed
 
@@ -291,7 +331,9 @@ Registers a function to be executed when the left key is pressed
 
 Example: {{{juice.events.key.left(function(){alert("left")});}}}
 
-=== right(func) === [Since 0.1.1]
+=== right(func) === 
+
+(Since 0.1.1)
 
 Registers a function to be executed when the right key is pressed
 
@@ -300,7 +342,9 @@ Registers a function to be executed when the right key is pressed
 
 Example: {{{juice.events.key.right(function(){alert("right")});}}}
 
-=== up(func) === [Since 0.1.1]
+=== up(func) === 
+
+(Since 0.1.1)
 
 Registers a function to be executed when the up key is pressed
 
@@ -309,7 +353,9 @@ Registers a function to be executed when the up key is pressed
 
 Example: {{{juice.events.key.up(function(){alert("up")});}}}
 
-=== down(func) === [Since 0.1.1]
+=== down(func) === 
+
+(Since 0.1.1)
 
 Registers a function to be executed when the down key is pressed
 
@@ -317,3 +363,9 @@ Registers a function to be executed when the down key is pressed
 	* *func*: Function to be executed 
 
 Example: {{{juice.events.down.left(function(){alert("down")});}}}
+
+
+
+
+
+
