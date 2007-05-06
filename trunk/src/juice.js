@@ -87,36 +87,28 @@ juice.log.AlertLogger = function(){
 	* @final
 	*/
 	var log = alert_log;
-	
 	this.setNone = function(){
 		current_level = none;
 	}
-	
 	this.setDebugLevel = function(){
 		current_level = debug_level;
 	}
-	
 	this.setErrorLevel = function(){
 		current_level = error_level;
 	}
-	
 	this.setInfoLevel = function(){
 		current_level = info_level;
 	}
-	
 	this.setAlertLogger =  function(){
 		log = alert_log;
 	}
-	
 	this.setCustomLogger = function(logger){
 		log = logger;
 	}
-	
 	this.debug = function(message){
 		if(log && current_level >= debug_level)
 			log("[JUICE DEBUG]"+message);
 	}
-	
 	this.info = function(message){
 		if(log && current_level >= info_level)
 			log("[JUICE INFO]"+message);
@@ -206,6 +198,154 @@ String.prototype.fstrip = function(){
 	return this.rstrip().lstrip();
 };
 
+/**
+* ADD SOME HTML DOM 
+*/
+
+/*
+Returns an HTML element list if the string starts with @ (elementsByTagName) or
+the element with ID equals to the string value
+*/
+String.prototype.el = function(){
+	if (/^@/.test(this)){
+		var elems = document.getElementsByTagName(this.substring(1)); 
+		var list = [];
+		if (elems) {
+			for(i=0; i<elems.length; i++) {
+				list.push(elems[i]);
+			}
+		}
+		return list;
+	}else if (/^%/.test(this)){
+		return document.getElementById(this.substring(1));
+	}else{
+		return this;
+	}
+};
+
+String.prototype.apply = function(op){
+	var el = this.el();
+	if(!el) return;
+	try {
+		if(el.constructor==Array){
+			el.map(op)
+		}else{
+			op(el);
+		}
+	}catch(ex){
+		alert(ex);
+	}
+};
+
+String.prototype.block = function(){
+	this.apply(juice.html.block)
+};
+
+String.prototype.none = function(){
+	this.apply(juice.html.none);
+};
+
+String.prototype.visible = function(){
+	this.apply(juice.html.visible);
+};
+
+String.prototype.invisible = function(){
+	this.apply(juice.html.invisible);
+};
+
+String.prototype.appendHTML = function(html){
+	this.apply(function(x){juice.html.appendHTML(x, html)});
+};	
+
+String.prototype.setHTML = function(html){
+	this.apply(function(x){juice.html.setHTML(x, html)});
+};
+
+String.prototype.clearHTML = function(){
+	this.apply(juice.html.clearHTML);
+};
+
+String.prototype.submit = function(handler){
+	this.apply(function(x){juice.html.submit(x, handler)});
+};
+
+
+/**********************************************************************
+*
+*                            HTML functions
+*
+***********************************************************************/
+juice.html = {
+	/* Sets display mode "block" */
+	block: function(el){
+		el.style.display="block";
+	},
+	/* Sets display mode "none" */
+	none: function(el){
+		el.style.display="none";
+	},
+	/* Sets visibility mode "visible" */
+	visible: function(el){
+		el.style.visibility="visible";
+	},
+	/* Sets visibility mode "hidden" */
+	invisible: function(el){
+		el.style.visibility="hidden";
+	},
+	/* Appends an HTML snippet to the given node */
+	appendHTML: function(el, html){
+		el.innerHTML += html;
+	},
+	/* Set an HTML snippet to the given node */
+	setHTML: function(el, html){
+		el.innerHTML = html;
+	},
+	/* Clear html value */
+	clearHTML: function(el){
+		el.innerHTML = "";
+	},
+	/* Submits a form using AJAX */
+	submit: function(form, handler){
+		if(!/form/i.test(form.tagName)) return;
+		_formdata = {};
+		var add = function(name, value){
+			if(_formdata[name]){
+				var list = [_formdata[name],value];
+				_formdata[name]=list;
+			}else{
+				_formdata[name] = value;
+			}
+		};
+		for (var x=0; x< form.length; x++){
+			// INPUT TAGS
+			if (/input/i.test(form[x].tagName) && form[x].getAttribute('type')){
+				if (/checkbox/i.test(form[x].getAttribute('type')) ||
+					/radio/i.test(form[x].getAttribute('type'))){
+					// If its checkbox or radio, adds only checked elements
+			   		if ( form[x].checked) add(form[x].name,form[x].value);
+			   	}else if (/submit/i.test(form[x].getAttribute('type'))){
+			   		// Button, dont add
+			    	continue;
+			   	}else{
+			   		// Other types of inputs
+			    	add(form[x].name,form[x].value);
+			   	}
+			}else{	
+				// SELECT and TEXTAREA
+				add(form[x].name,form[x].value);
+			}				
+		}
+		// Builds the request string 
+		var _req = juice.rpc.buildRequest(_formdata);
+		var _url = form.getAttribute("action");
+		var _method = form.getAttribute("method");
+		if (_method && /post/i.test(_method)) 
+			juice.rpc.post(_url, _req, handler);
+		else
+			juice.rpc.get(_url, _req, handler);
+	}
+};
+
 /**********************************************************************
 *
 *                            DATA MANIPULATION
@@ -224,7 +364,6 @@ juice.data = {
 			for (var i in dict) ks.push(i);
 		return ks;
 	},
-	
 	/**
     * Returns an array containing the values stored in
 	* an associative array (dict). Returns an
@@ -298,23 +437,45 @@ Array.prototype.filter = function(func){
 ***********************************************************************/
 
 juice.rpc = {
-
 	/* Ajax GET request wrapper */
 	get: function(url, params, response, error)	{
-		var ajx = new juice.rpc.Ajax(url, response_handler, error_handler);
+		var ajx = new juice.rpc.Ajax(url, response, error);
 		ajx.get(params);
 	},
-	
 	/* Ajax POST request wrapper */
 	post: function(url, params, response, error)	{
-		var ajx = new juice.rpc.Ajax(url, response_handler, error_handler);
+		var ajx = new juice.rpc.Ajax(url, response, error);
 		ajx.post(params);
 	},
-	
 	/* Sends a message using POST method, does not wait for an answer */
 	send: function(url, params)	{
 		var ajx = new juice.rpc.Ajax(url);
 		ajx.post(params);
+	},
+	/**
+	* Function that builds a query string based on
+	* an associative array
+	* @param {Dict} dict Associative array containing keys and values
+	* @return  URI query string in the form key=value&key=value
+	* @type String
+	*/
+	buildRequest: function(dict){
+		var ks  = juice.data.dictKeys(dict);
+		var sb = new juice.text.StringBuffer();
+		var len = ks.length;
+		var append=function(name, value){
+			sb.append(encodeURIComponent(name)+"="+encodeURIComponent(value));
+		}
+		for (var i=0; i<len; i++){
+			var val = dict[ks[i]]; 
+			if (val.constructor == Array){
+				for(var j=0; j<val.length; j++)
+					append(ks[i], encodeURIComponent(val[j]));
+			}else{
+				append(ks[i], encodeURIComponent(val));
+			}
+		}
+		return sb.concat("&");
 	}
 };
 	
@@ -325,7 +486,6 @@ juice.rpc.Ajax = function(url, response, error){
 	var eh = error;
   	var rh = response;
   	var u = url;
- 
   	/**
   	* Create a new request object
   	*/
@@ -361,12 +521,10 @@ juice.rpc.Ajax = function(url, response, error){
 					}
     			}
     		};
-    	}
-  		
+    	}		
     	return req;
   	};
   
-
 	/** 
   	* Response wrapper. An instance of this object is passed to
   	* the response handler
@@ -404,7 +562,6 @@ juice.rpc.Ajax = function(url, response, error){
   	/***************************************
   	*  PUBLIC METHODS
   	****************************************
-  	
   	/**
   	* Performs an asynchronous post request
   	*/
@@ -425,7 +582,6 @@ juice.rpc.Ajax = function(url, response, error){
 			}
     	}
   	}
-  	
   	/**
   	* Performs an asynchronous post request
   	*/
@@ -448,11 +604,14 @@ juice.rpc.Ajax = function(url, response, error){
   	}
 };
 	
-	
+
+/**********************************************
+* AJAX scheduler Class
+***********************************************/
+
 juice.rpc.AjaxScheduler = function(url, params){
 	
 		var f;
-		
 		/* Sets parameters */
 		var _delay = 5;
 		if(params.delay > 0)
@@ -474,30 +633,25 @@ juice.rpc.AjaxScheduler = function(url, params){
 		
 		/* Creates new AJAX object */
 		var _xhr = new juice.rpc.Ajax(url, wrap(_response), wrap(_error));
-		
 		/* Defines the send method */
 		var send;
 		if (_method == "POST") send = _xhr.post;
 		else send = _xhr.get;
-		
 		/* Defines the send function */
 		if (typeof _request == "function" )
 			f = function(){send(_request());};
 		else
 			f = function(){send(_request);};
 		
-		
 		/***************************************
   		*  PUBLIC METHODS
   		****************************************/
-  
 		/**
 		* Starts the AjaxScheduler
 		*/
 		this.start = function(){
 			setTimeout(f, _delay);
 		}
-		
 		/**
 		* Stops the AjaxScheduler
 		*/
@@ -506,68 +660,6 @@ juice.rpc.AjaxScheduler = function(url, params){
 		}
 };
 
-
-/**********************************************************************
-*
-*                          HTTP FUNCTIONS
-*
-***********************************************************************/
-
-juice.http ={
-	/**
-	* Function that builds a query string based on
-	* an associative array
-	* @param {Dict} dict Associative array containing keys and values
-	* @return  URI query string in the form key=value&key=value
-	* @type String
-	*/
-	buildRequestStr: function(dict){
-		var ks  = juice.data.dictKeys(dict);
-		var sb = new juice.text.StringBuffer();
-		var isfirst = true;
-		var len = ks.length;
-		for (var i=0; i<len; i++){
-			if (isfirst) isfirst = false;
-			else sb.append("&");
-			sb.append(encodeURIComponent(ks[i]));
-			sb.append("=");
-			sb.append(encodeURIComponent(dict[ks[i]]));
-		}
-		return sb.toString();
-	}
-		
-}
-
-
-/**********************************************************************
-*
-*                          HTML FUNCTIONS
-*
-***********************************************************************/
-
-juice.html={
-		
-	/*
-	* Performs a POST request, and updates the given HTML
-	* element innerHTML with the response (html snippet)
-	*  @param {string} url
-	*  @param {string} request parameters
-	*  @param {string} blockid DIV/SPAN id
-	*/
-	updateBlockContent: function(url, params, blockid){
-		juice.rpc.post(url, params, function(response){
-			if(blockid){
-				alert(blockid);
-				 var div = document.getElementById(blockid);
-				 alert(div);
-				 if (div){
-				 	div.innerHTML = response.text();
-				 }
-			}
-		});	
-	}
-	
-}
 
 /**********************************************************************
 *
@@ -622,7 +714,6 @@ juice.events.onload = new function(){
 		}
 	
 		/* PUBLIC FUNCTIONS */
-	
 		return {
 			/**
 			* Registers a function to be executed after document loading
@@ -638,7 +729,6 @@ juice.events.onload = new function(){
 				else 
 					throw "Argument must be function pointer or string"
 			},
-	
 			/**
 			* Removes all registered functions
 			* @member juice.events.OnLoadEventManager
@@ -647,7 +737,6 @@ juice.events.onload = new function(){
 				_flist = [];
 				_strlist = [];
 			},
-	
 			/**
 			* Provides a method for body.onload attribute,
 			* in case the automatic behaviour does not work
@@ -656,8 +745,7 @@ juice.events.onload = new function(){
 			*/
 			exec: function(){
 				_run();
-			}
-			
+			}		
 		};
 };
 
@@ -706,9 +794,7 @@ juice.events.key = new function(){
 			}
 		};
 		
-	
 		/* PUBLIC FUNCTIONS */
-		
 		return {
 			/**
 			* Registers a function to be executed when the given char is pressed
@@ -758,6 +844,5 @@ juice.events.key = new function(){
 			handleKeys: function(){
 				_addhandlers();
 			}
-			
 		};
 };
