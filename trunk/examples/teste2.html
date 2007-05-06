@@ -1,0 +1,57 @@
+<html>
+<head>
+<script src="juice.js"></script>
+
+<script>
+function none(){'@div'.none();}
+function show(){'@div'.block();}
+function visible(){'%div1'.visible();}
+function invisible(){'%div1'.invisible();}
+
+function apply(){
+	'@div'.apply(function(x){x.style.backgroundColor="#FF0000"});
+	'%div1'.clearHTML();
+}
+
+function apply2(){
+	'@span'.apply(function(x){x.style.backgroundColor="#00FF00"});
+	'%div1'.setHTML("Ola mundo<br>");
+	'%div1'.appendHTML("Ola mundo 2<br>");
+}
+</script>
+
+</head>
+<body>
+<div id="div1">
+DIV 1
+</div>
+<br>
+<div id="div2" onclick="none();">
+DIV 2: Clique aqui para apagar todas as divs
+</div>
+<br>
+<span onclick="show();">SPAN 1: clique aqui para mostrar as divs</span><br><br>
+<span onclick="invisible();">SPAN 2: clique aqui para torna a div 1 invisivel</span><br><br>
+<span onclick="visible();">SPAN 3: clique aqui para torna a div 1 visivel</span><br><br>
+<span onclick="apply();">SPAN 4: clique aqui para aplicar a regra que quiser em todas as divs</span><br><br>
+<span onclick="apply2();">SPAN 5: clique aqui para aplicar a regra que quiser em todas as spans</span>
+
+<form id="meuform" action="teste.py">
+<input type="text" name="empresa"><br>
+<input type="text" name="empresa"><br>
+<input type="text" name="url"><br>
+<textarea name="descricao"></textarea><br>
+<input type="checkbox" name="check" value="1">1</input>
+<input type="checkbox" name="check2" value="2">2</input><br>
+<input type="radio" name="radio" value="1">1</input>
+<input type="radio" name="radio" value="2">2</input><br>
+<select name="selecao">
+<option value="opcao 1">Op 1</opcao>
+<option value="opcao 2">Op 2</opcao>
+<option value="opcao 3">Op 3</opcao>
+</select><br>
+<span onclick="'%meuform'.submit()">ENVIAR</span><br>
+<input type="SUBMIT" value="teste">SUBMETER</input>
+</form>
+
+</body>
