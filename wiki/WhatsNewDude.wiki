@@ -3,7 +3,7 @@
 
 == 06/05/2007 ==
 
-Version 0.3 released, with HMTL DOM manipulation functions and form submition using AJAX added. HTML DOM elements can be manipulated using _juice.html_ package or by using "%elementID" or "%tagname".
+Version 0.3 released, with HMTL DOM manipulation functions and form submition using AJAX added. HTML DOM elements can be manipulated using _juice.html_ package or by using "%elementID" or "@tagname".
 
 Examples: 
 
@@ -18,5 +18,4 @@ Some basic documentation added. Check JuiceDoc.
 == 10/04/2007 ==
 
 Version 0.1.2 released, with AJAX polling system feature added.
-
 
