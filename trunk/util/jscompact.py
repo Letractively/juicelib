@@ -1,4 +1,5 @@
 """
+Created by Miguel Galves
 Simple javascript code compact tool
 """
 
