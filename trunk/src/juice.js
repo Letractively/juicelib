@@ -383,6 +383,19 @@ juice.data = {
 * ADD SOME NICE FUNCTIONALITIES TO ARRAY OBJECT
 */
 
+
+/* indexOf returns the index where "obj" exists in Array, returning -1 if it does not exist. */
+Array.prototype.indexOf = function(obj){
+  for(var i=0; i<this.length; i++){
+    if(this[i]==obj){
+      return i;
+    }
+  }
+  return -1;
+}
+  
+
+
 /* Reduce function.*/
 Array.prototype.reduce = function(func){
 	if (!func || typeof func != "function")
@@ -401,6 +414,8 @@ Array.prototype.reduce = function(func){
 * Map function. Apply a function f to all elements of an array
 * and returns a new array.
 */
+
+
 Array.prototype.map = function(func){
 	if (!func || typeof func != "function")
 		throw "Invalid parameter: func must be a valid function reference"
